@@ -2,6 +2,7 @@
 #define CHATBOT_H_
 
 #include <wx/bitmap.h>
+#include <iostream>
 #include <string>
 
 class GraphNode; // forward declaration
@@ -25,10 +26,21 @@ public:
     // constructors / destructors
     ChatBot();                     // constructor WITHOUT memory allocation
     ChatBot(std::string filename); // constructor WITH memory allocation
-    ~ChatBot();
+    ~ChatBot(); // TODO: delete data (if non-empty)?
 
     //// STUDENT CODE
     ////
+    // copy constructor
+    ChatBot(const ChatBot &source);
+
+    // copy assignment constructor
+    ChatBot &operator=(const ChatBot &source);
+
+    // move constructor
+    ChatBot(ChatBot &&source);
+
+    // move assignment constructor
+    ChatBot &operator=(ChatBot &&source);
 
     ////
     //// EOF STUDENT CODE
