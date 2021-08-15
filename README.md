@@ -4,7 +4,7 @@ This project is my submission for the final project in the Memory Management cou
 
 <img src="images/chatbot_demo.gif"/>
 
-The basic idea of the chatbot is to use a [Knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph). Each node contains answers/output of the chatbot. The edges are labelled with keywords. The edge, whose keywords are closest to the user's query (with respect to the [Levensthein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)), determines the next node (child node). In this way, the chatbot traverses the knowledge graph until a node with no child nodes is reached. Then the dialog starts again from the so-called root node which typically contains greetings of the chatbot to the user. 
+The basic idea of the chatbot is to use a [Knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph). Each node contains answers/output of the chatbot. The edges are labelled with keywords. The edge, whose keywords are closest to the user's query (with respect to the [Levensthein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)), determines the next node (child node). In this way, the chatbot traverses the knowledge graph until a node with no child nodes is reached. Then the dialog starts again from the so-called root node which typically contains a greeting of the chatbot to the user. 
 
 ## Dependencies 
 * cmake >= 3.11
@@ -33,26 +33,27 @@ The basic idea of the chatbot is to use a [Knowledge graph](https://en.wikipedia
 As described above, the basic idea of the chatbot is to traverse a knowledge graph according to the user's queries. This is mainly achieved through five classes and their most important attributes: 
 
 * _GraphEdge_ 
- * **_keywords**: basic terms of memory management in C++.
+ - **_keywords**: basic terms of memory management in C++.
 
 * _GraphNode_ 
- * **_answers**: determined by keywords of the corresponding edges. 
- * **_childEdges**, *_parentEdges*: the outgoing and ingoing edges of a node.
- * *_chatBot*: instance of the ChatBot class ('current position of the chatbot').
+ - **_answers**: determined by keywords of the corresponding edges. 
+ - **_childEdges**, *_parentEdges*: the outgoing and ingoing edges of a node.
+ - *_chatBot*: instance of the ChatBot class ('current position of the chatbot').
 
 * _ChatBotPanelDialog_ to display the chatbot output and receiving the user's input (mainly based on wxWidgets).
- * **_chatLogic** instance of _ChatLogic_ below. 
+ - **_chatLogic** instance of _ChatLogic_ below. 
 
 * _ChatLogic_ intermediates between the panel and chatbot. 
- * **_nodes** of the knowledge graph.
- * *_currentNode* of the chatbot.
- * *_panelDialog*: keeps track of the corresponding chatbot panel.
- * *_chatBot*: the actual chatbot (see below).
+ - **_nodes** of the knowledge graph.
+ - *_currentNode* of the chatbot.
+ - *_panelDialog*: keeps track of the corresponding chatbot panel.
+ - *_chatBot*: the actual chatbot (see below).
 
 * _ChatBot_
- * **_image**: displayed as the avatar of the chatbot.
- * *_currentNode* of chatbot in the knowledge graph. 
- * *_chatLogic* handls the interface between panel and chatbot.
+ - **_image**: displayed as the avatar of the chatbot.
+ - *_currentNode* of chatbot in the knowledge graph. 
+ - *_rootNode*: root of the knowledge graph (containing a greeting to the user)
+ - *_chatLogic* handls the interface between panel and chatbot.
 
  Here the bold attributes are owned by the corresponding class, i.e. they are [unique pointers](https://en.cppreference.com/w/cpp/memory/unique_ptr) to a class instance (on the heap). For example, it makes sense that an object of ChatLgoic owns all the nodes of the knowledge graph. In contrast, the current node is not owned but moved (using _move semantics_) when the chatbot does.
 
