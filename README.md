@@ -1,16 +1,12 @@
-# CPPND: Memory Management Chatbot
+# Memory Management Chatbot
 
-This is the project for the third course in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213): Memory Management.
+This project is my submission for the final project in the Memory Management course of the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The user can ask the chatbot about basic terms of the memory management in C++, for example:
 
 <img src="images/chatbot_demo.gif"/>
 
-The ChatBot code creates a dialogue where users can ask questions about some aspects of memory management in C++. After the knowledge base of the chatbot has been loaded from a text file, a knowledge graph representation is created in computer memory, where chatbot answers represent the graph nodes and user queries represent the graph edges. After a user query has been sent to the chatbot, the Levenshtein distance is used to identify the most probable answer. The code is fully functional as-is and uses raw pointers to represent the knowledge graph and interconnections between objects throughout the project.
+The basic idea of the chatbot is to use a [Knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph). Each node contains answers/output of the chatbot. The edges are labelled with keywords. The edge, whose keywords are closest to the user's query (with respect to the [Levensthein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)), determines the next node (child node). In this way, the chatbot traverses the knowledge graph until a node with no child nodes is reached. Then the dialog starts again from the so-called root node which typically contains greetings of the chatbot to the user. 
 
-In this project you will analyze and modify the program. Although the program can be executed and works as intended, no advanced concepts as discussed in this course have been used; there are currently no smart pointers, no move semantics and not much thought has been given to ownership or memory allocation.
-
-Your goal is to use the course knowledge to optimize the ChatBot program from a memory management perspective. There are a total of five specific tasks to be completed, which are detailed below.
-
-## Dependencies for Running Locally
+## Dependencies 
 * cmake >= 3.11
   * All OSes: [click here for installation instructions](https://cmake.org/install/)
 * make >= 4.1 (Linux, Mac), 3.81 (Windows)
@@ -27,39 +23,45 @@ Your goal is to use the course knowledge to optimize the ChatBot program from a 
   * Installation instructions can be found [here](https://wiki.wxwidgets.org/Install). Some version numbers may need to be changed in instructions to install v3.0 or greater.
 
 ## Basic Build Instructions
-
 1. Clone this repo.
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./membot`.
 
-## Project Task Details
 
-Currently, the program crashes when you close the window. There is a small bug hidden somewhere, which has something to do with improper memory management. So your first warm-up task will be to find this bug and remove it. This should familiarize you with the code and set you up for the rest of the upcoming tasks. Have fun debugging!
+## Implementation
+As described above, the basic idea of the chatbot is to traverse a knowledge graph according to the user's queries. This is mainly achieved through five classes and their most important attributes: 
 
-Aside from the bug mentioned above, there are five additional major student tasks in the Memory Management chatbot project, which are:
+* _GraphEdge_ 
+ * **_keywords**: basic terms of memory management in C++.
 
-### Task 1 : Exclusive Ownership 1
-In file `chatgui.h` / `chatgui.cpp`, make `_chatLogic` an exclusive resource to class `ChatbotPanelDialog` using an appropriate smart pointer. Where required, make changes to the code such that data structures and function parameters reflect the new structure. 
+* _GraphNode_ 
+ * **_answers**: determined by keywords of the corresponding edges. 
+ * **_childEdges**, *_parentEdges*: the outgoing and ingoing edges of a node.
+ * *_chatBot*: instance of the ChatBot class ('current position of the chatbot').
 
-### Task 2 : The Rule Of Five
-In file `chatbot.h` / `chatbot.cpp`, make changes to the class `ChatBot` such that it complies with the Rule of Five. Make sure to properly allocate / deallocate memory resources on the heap and also copy member data where it makes sense to you.  In each of the methods (e.g. the copy constructor), print a string of the type "ChatBot Copy Constructor" to the console so that you can see which method is called in later examples. 
+* _ChatBotPanelDialog_ to display the chatbot output and receiving the user's input (mainly based on wxWidgets).
+ * **_chatLogic** instance of _ChatLogic_ below. 
 
-### Task 3 : Exclusive Ownership 2
-In file `chatlogic.h` / `chatlogic.cpp`, adapt the vector `_nodes` in a way that the instances of `GraphNodes` to which the vector elements refer are exclusively owned by the class `ChatLogic`. Use an appropriate type of smart pointer to achieve this. Where required, make changes to the code such that data structures and function parameters reflect the changes. When passing the `GraphNode` instances to functions, make sure to not transfer ownership and try to contain the changes to class `ChatLogic` where possible. 
+* _ChatLogic_ intermediates between the panel and chatbot. 
+ * **_nodes** of the knowledge graph.
+ * *_currentNode* of the chatbot.
+ * *_panelDialog*: keeps track of the corresponding chatbot panel.
+ * *_chatBot*: the actual chatbot (see below).
 
-### Task 4 : Moving Smart Pointers
+* _ChatBot_
+ * **_image**: displayed as the avatar of the chatbot.
+ * *_currentNode* of chatbot in the knowledge graph. 
+ * *_chatLogic* handls the interface between panel and chatbot.
 
-In files `chatlogic.h` / `chatlogic.cpp` and `graphnode.h` / `graphnode.cpp` change the ownership of all instances of `GraphEdge` in a way such that each instance of `GraphNode` exclusively owns the outgoing `GraphEdges` and holds non-owning references to incoming `GraphEdges`. Use appropriate smart pointers and where required, make changes to the code such that data structures and function parameters reflect the changes. When transferring ownership from class `ChatLogic`, where all instances of `GraphEdge` are created, into instances of `GraphNode`, make sure to use move semantics. 
+ Here the bold attributes are owned by the corresponding class, i.e. they are [unique pointers](https://en.cppreference.com/w/cpp/memory/unique_ptr) to a class instance (on the heap). For example, it makes sense that an object of ChatLgoic owns all the nodes of the knowledge graph. In contrast, the current node is not owned but moved (using _move semantics_) when the chatbot does.
 
-### Task 5 : Moving the ChatBot
+The following shows an overview of the classes in this project (provided by Udacity instructors):
+<img src="images/udacity-memory-management-final-project-overview.png"/>
 
-In file `chatlogic.cpp`, create a local `ChatBot` instance on the stack at the bottom of function `LoadAnswerGraphFromFile`. Then, use move semantics to pass the `ChatBot` instance into the root node. Make sure that `ChatLogic` has no ownership relation to the `ChatBot` instance and thus is no longer responsible for memory allocation and deallocation. Note that the member `_chatBot` of `ChatLogic` remains so it can be used as a communication handle between GUI and `ChatBot` instance. Make all required changes in files `chatlogic.h` / `chatlogic.cpp` and `graphnode.h` / `graphnode.cpp`. When the program is executed, messages on which part of the Rule of Five components of `ChatBot` is called should be printed to the console. When sending a query to the `ChatBot`, the output should look like the following: 
 
-```
-ChatBot Constructor
-ChatBot Move Constructor
-ChatBot Move Assignment Operator
-ChatBot Destructor
-ChatBot Destructor 
-```
+Thesmaller boxes inside the larger ones are methods of the corresponding classes. For example, _LoadAnswerGraphFromFile_ creates the knowledge graph from a text file. The dotted arrows show where a method maps to or to which class an attribute belongs.
+
+
+## On starter code
+Most part of this code has been provided by [Udacity](https://github.com/udacity/CppND-Memory-Management-Chatbot). The main point of the project (since it is about memory management) was to figure out the ownership of the various attributes and to adapt functions correspondingly. 
