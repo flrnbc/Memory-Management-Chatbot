@@ -37,7 +37,7 @@ As described above, the basic idea of the chatbot is to traverse a knowledge gra
 
 * _GraphNode_ 
     - **_answers**: determined by keywords of the corresponding edges. 
-    - **_childEdges**, *_parentEdges*: the outgoing and ingoing edges of a node.
+    - **_childEdges** and *_parentEdges*: the outgoing and ingoing edges of a node respectively.
     - *_chatBot*: instance of the ChatBot class ('current position of the chatbot').
 
 * _ChatBotPanelDialog_ to display the chatbot output and receiving the user's input (mainly based on wxWidgets).
@@ -61,8 +61,8 @@ The following shows an overview of the classes in this project (provided by Udac
 <img src="images/udacity-memory-management-final-project-overview.png"/>
 
 
-Thesmaller boxes inside the larger ones are methods of the corresponding classes. For example, _LoadAnswerGraphFromFile_ creates the knowledge graph from a text file. The dotted arrows show where a method maps to or to which class an attribute belongs.
+The smaller boxes inside the larger ones are methods of the corresponding classes. For example, _LoadAnswerGraphFromFile_ creates the knowledge graph from a text file. The dotted arrows show where a method maps to or to which class an attribute belongs.
 
 
 ## On starter code
-Most part of this code has been provided by [Udacity](https://github.com/udacity/CppND-Memory-Management-Chatbot). The main point of the project (since it is about memory management) was to figure out the ownership of the various attributes and to adapt functions correspondingly. 
+Most part of this code has been provided by [Udacity](https://github.com/udacity/CppND-Memory-Management-Chatbot). The main challenge of the project (since it is about memory management) was to figure out the ownership of the various attributes and to adapt functions correspondingly.
