@@ -36,7 +36,7 @@ void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
 ////
 void GraphNode::MoveChatbotHere(ChatBot chatbot)
 {
-    _chatBot = std::move(chatbot);
+    _chatBot = std::move(chatbot); // invokes the move assignment operator
     _chatBot.SetCurrentNode(this);
 }
 
